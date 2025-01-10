@@ -1,6 +1,7 @@
 package com.example.compute_service.cache;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PercentageCache {
 
+  
     private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
 
     public void put(String key, double value, long ttl, TimeUnit timeUnit) {
@@ -18,8 +20,9 @@ public class PercentageCache {
 
     public Double get(String key) {
         cleanUp();
-        CacheEntry entry = cache.get(key); // Obtener la entrada del caché
-        return (entry != null) ? entry.value() : null; // Retornar el valor o null si no existe
+        return Optional.ofNullable(cache.get(key))
+                       .map(CacheEntry::value)
+                       .orElse(null);
     }
 
     private void cleanUp() {
