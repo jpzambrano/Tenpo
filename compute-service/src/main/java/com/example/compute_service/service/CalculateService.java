@@ -20,7 +20,7 @@ public class CalculateService {
 
     public CalculationResponse execute(CalculationRequest request) {
         double sum = Stream.of(request.num1(), request.num2())
-                           .reduce(0.0, Double::sum); // Suma los números
+                           .reduce(0.0, Double::sum); // Sum the numbers
 
         double percentage = percentageProvider.getPercentage();
         double result = sum + (sum * percentage);
