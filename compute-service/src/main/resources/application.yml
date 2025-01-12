@@ -7,8 +7,14 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
   cache:
     type: simple
 
 server:
   port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.example.compute_service: INFO
