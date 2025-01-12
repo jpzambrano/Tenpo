@@ -1,4 +1,6 @@
 spring:
+  main:
+    web-application-type: reactive
   datasource:
     url: jdbc:postgresql://localhost:5432/compute_service
     username: postgres
@@ -10,11 +12,31 @@ spring:
     open-in-view: false
   cache:
     type: simple
+  data:
+    redis:
+      host: localhost # Dirección de Redis
+      port: 6379 # Puerto de Redis
+
+  cloud:
+    gateway:
+      routes:
+        - id: rate_limit_route
+          uri: http://localhost:8080 # Ruta de destino
+          predicates:
+            - Path=/api/** # Aplica rate limiting a rutas que empiecen con /api/
+          filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@keyResolver}"
+                redis-rate-limiter.replenishRate: 3 # Solicitudes permitidas por segundo
+                redis-rate-limiter.burstCapacity: 5 # Máximo número de solicitudes acumuladas
 
 server:
   port: 8080
 
 logging:
   level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.data.redis: DEBUG
     root: INFO
     com.example.compute_service: INFO
