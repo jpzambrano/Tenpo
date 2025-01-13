@@ -16,6 +16,8 @@ spring:
     redis:
       host: localhost # Dirección de Redis
       port: 6379 # Puerto de Redis
+      password: ""
+      timeout: 5000ms
 
   cloud:
     gateway:
@@ -27,9 +29,9 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                key-resolver: "#{@keyResolver}"
                 redis-rate-limiter.replenishRate: 3
                 redis-rate-limiter.burstCapacity: 5
+                key-resolver: "#{@keyResolver}"
 
 server:
   port: 8080
