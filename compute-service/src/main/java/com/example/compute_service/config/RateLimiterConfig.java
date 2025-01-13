@@ -5,12 +5,19 @@ import org.springframework.context.annotation.Configuration;
 
 import reactor.core.publisher.Mono;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 
 @Configuration
-public class RateLimiterConfig {
-
+public class RateLimiterConfig  {
+    private static final Logger log = LoggerFactory.getLogger(RateLimiterConfig.class);
   /**
      * Define un RedisRateLimiter con un replenishRate de 3 y un burstCapacity de 5.
      * Esto configura cuántas solicitudes se permiten por segundo y la capacidad de ráfaga máxima.
@@ -25,10 +32,14 @@ public class RateLimiterConfig {
      * Esto asegura que el Rate Limiting se aplique por cliente (basado en IP).
      */
     @Bean
-    public KeyResolver keyResolver() {
+    public KeyResolver limitResolver() {
+        log.info("KeyResolver bean created");
         return exchange -> {
-            String clientKey = exchange.getRequest().getRemoteAddress().getAddress().getHostAddress();
-            System.out.println("Client Key: " + clientKey);
+            String clientKey = Optional.ofNullable(exchange.getRequest().getRemoteAddress())
+                                        .map(InetSocketAddress::getAddress)
+                                        .map(InetAddress::getHostAddress)
+                                        .orElse("unknown");
+            log.info("Client Key: {}", clientKey);
             return Mono.just(clientKey);
         };  
     }
