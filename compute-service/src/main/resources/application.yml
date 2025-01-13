@@ -28,15 +28,20 @@ spring:
             - name: RequestRateLimiter
               args:
                 key-resolver: "#{@limitResolver}"
-                redis-rate-limiter.replenishRate: 3 # Solicitudes permitidas por segundo
-                redis-rate-limiter.burstCapacity: 5 # Máximo número de solicitudes acumuladas
+                redis-rate-limiter.replenishRate: 3
+                redis-rate-limiter.burstCapacity: 5
 
 server:
   port: 8080
 
 logging:
   level:
+    root: INFO
     org.springframework.cloud.gateway: DEBUG
     org.springframework.data.redis: DEBUG
-    root: INFO
-    com.example.compute_service: INFO
+    org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter: DEBUG
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
