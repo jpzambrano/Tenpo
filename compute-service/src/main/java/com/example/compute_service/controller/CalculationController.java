@@ -33,7 +33,7 @@ public class CalculationController {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/calculate")
+    @PostMapping("/calculate")    
     public CalculationResponse calculate(@Valid @RequestBody CalculationRequest request) {
         return calculateService.execute(request);
     }

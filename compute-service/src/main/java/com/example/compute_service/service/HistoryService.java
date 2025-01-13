@@ -1,11 +1,11 @@
 package com.example.compute_service.service;
 
 import com.example.compute_service.entity.CalculationHistory;
-import com.example.compute_service.model.HistoryResponse;
 import com.example.compute_service.repository.HistoryRepository;
 
-import java.time.LocalDateTime;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +29,10 @@ public class HistoryService {
         historyRepository.save(history);
     }
 
-    public Page<HistoryResponse> getHistory(int page, int size) {
-        return historyRepository.findAll(PageRequest.of(page, size))
-                                .map(history -> new HistoryResponse(
-                                    history.getNum1(),
-                                    history.getNum2(),
-                                    history.getResult(),
-                                    history.getTimestamp()
-                                ));
+ public Mono<Page<CalculationHistory>> getHistory(int page, int size) {
+        return Mono.fromCallable(() -> {
+            PageRequest pageable = PageRequest.of(page, size);
+            return historyRepository.findAll(pageable);
+        });
     }
 }

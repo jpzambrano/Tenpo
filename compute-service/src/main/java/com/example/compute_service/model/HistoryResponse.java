@@ -1,10 +1,10 @@
 package com.example.compute_service.model;
-
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record HistoryResponse(
-    double num1,
-    double num2,
-    double result,
-    LocalDateTime timestamp
+    List<?> content,
+    int totalPages,
+    long totalElements,
+    int pageNumber,
+    int pageSize
 ) {}
