@@ -1,5 +1,7 @@
 package com.example.compute_service.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +36,9 @@ public class CalculationController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/calculate")    
-    public CalculationResponse calculate(@Valid @RequestBody CalculationRequest request) {
-        return calculateService.execute(request);
+    public ResponseEntity<CalculationResponse> calculate(@RequestBody CalculationRequest request) {
+        CalculationResponse response = calculateService.execute(request);
+        return ResponseEntity.ok(response);
+        
     }
 }

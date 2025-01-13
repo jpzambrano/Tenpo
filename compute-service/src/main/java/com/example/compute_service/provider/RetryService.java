@@ -17,14 +17,14 @@ public class RetryService {
 
     public <T> T executeWithRetries(Callable<T> task, int maxAttempts, long delayMillis) {
         return IntStream.rangeClosed(1, maxAttempts)
-                        .mapToObj(attempt -> tryTaskWithDelay(task, attempt, delayMillis, maxAttempts))
+                        .mapToObj(attempt -> tryTaskWithBackoff(task, attempt, delayMillis, maxAttempts))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("All retry attempts failed."));
     }
-
-    private <T> Optional<T> tryTaskWithDelay(Callable<T> task, int attempt, long delayMillis, int maxAttempts) {
+    
+    private <T> Optional<T> tryTaskWithBackoff(Callable<T> task, int attempt, long delayMillis, int maxAttempts) {
         try {
             logger.info("Attempt {} of {}", attempt, maxAttempts);
             return Optional.ofNullable(task.call());
@@ -32,7 +32,7 @@ public class RetryService {
             logger.warn("Attempt {} failed: {}", attempt, ex.getMessage());
             if (attempt < maxAttempts) {
                 try {
-                    Thread.sleep(delayMillis);
+                    Thread.sleep(delayMillis * attempt); // Backoff exponencial
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException("Retry attempts interrupted.", ie);
