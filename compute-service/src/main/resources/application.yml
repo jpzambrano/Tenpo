@@ -14,7 +14,7 @@ spring:
     type: simple
   data:
     redis:
-      host: localhost # Dirección de Redis
+      host: redis # Nombre del servicio definido en docker-compose.yml
       port: 6379 # Puerto de Redis
       password: ""
       timeout: 5000ms
@@ -23,7 +23,7 @@ spring:
     gateway:
       routes:
         - id: rate_limit_route
-          uri: http://localhost:8080 # Ruta de destino
+          uri: http://app:8080 # Ruta de destino
           predicates:
             - Path=/api/** # Aplica rate limiting a rutas que empiecen con /api/
           filters:
@@ -40,8 +40,8 @@ logging:
   level:
     root: INFO
     org.springframework.cloud.gateway: DEBUG
-    org.springframework.data.redis: DEBUG
     org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter: DEBUG
+    org.springframework.data.redis: DEBUG
 springdoc:
   api-docs:
     path: /v3/api-docs
