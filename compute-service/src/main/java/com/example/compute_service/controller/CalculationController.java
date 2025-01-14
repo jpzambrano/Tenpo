@@ -36,7 +36,7 @@ public class CalculationController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/calculate")    
-    public ResponseEntity<CalculationResponse> calculate(@RequestBody CalculationRequest request) {
+    public ResponseEntity<CalculationResponse> calculate(@Valid @RequestBody CalculationRequest request) {
         CalculationResponse response = calculateService.execute(request);
         return ResponseEntity.ok(response);
         

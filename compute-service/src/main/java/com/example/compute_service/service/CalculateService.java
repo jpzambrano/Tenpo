@@ -18,7 +18,7 @@ public class CalculateService {
   
     private final PercentageProvider percentageProvider;
     private final HistoryService historyService;
-    private final PercentageCache cacheService; // Manejo del caché para resiliencia.
+    private final PercentageCache cacheService; 
     private final Logger logger = LoggerFactory.getLogger(CalculateService.class);
 
     public CalculateService(PercentageProvider percentageProvider, 

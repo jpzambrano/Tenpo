@@ -13,27 +13,24 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
-import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 
 @Configuration
 @Slf4j
 public class RateLimiterConfig {
     private static final Logger logger = LoggerFactory.getLogger(RateLimiterConfig.class);
-   @Bean
-    public RedisRateLimiter redisRateLimiter() {
-        return new RedisRateLimiter(3, 5);
-    }
 
     @Bean
     public KeyResolver keyResolver() {
-        return exchange -> {
-            String clientKey = Optional.ofNullable(exchange.getRequest().getRemoteAddress())
-                                        .map(InetSocketAddress::getAddress)
-                                        .map(InetAddress::getHostAddress)
-                                        .orElse("unknown");
-            logger.info("Client Key: {}", clientKey); // Verifica que esto aparece en los logs
-            return Mono.just(clientKey);
-        };
-    }
+    return exchange -> Mono.just(
+         Optional.ofNullable(exchange.getRequest().getHeaders().getFirst("X-Forwarded-For"))
+                                    .orElseGet(() -> Optional.ofNullable(exchange.getRequest().getRemoteAddress())
+                                                             .map(InetSocketAddress::getAddress)
+                                                             .map(InetAddress::getHostAddress)
+                                                             .orElse("unknown"))
+    );
+
+    
+                    
+}   
 }
     
